@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import matplotlib as plt
+from matplotlib import pyplot as plt
 import seaborn as sns
 from bs4 import BeautifulSoup, SoupStrainer
 import urllib3
@@ -29,7 +29,7 @@ def beauty(urlf):
     soup = BeautifulSoup(response.data, 'html.parser', parse_only = onlyFirstEm)
     species_box = soup.find('em')
     name = species_box.text
-    print(name)
+    return name
 
 #generate url list with proteins for uniprot
 def generate_url_list(series):
@@ -41,7 +41,7 @@ def generate_url_list(series):
 
 #generate pandas series containing all species names
 def get_species(url_list):
-    species = pd.Series()
+    species = list()
     for url in url_list:
         try:
             ret_sp = beauty(url)
@@ -52,12 +52,25 @@ def get_species(url_list):
             time.sleep(1)
     return species
 
+#creates dataframe with counts per species and plots in the form of piechart
+def pieplot(speseries):
+    plt.figure()
+    df2 = speseries.value_counts().rename_axis('Species').reset_index(name = 'Counts')
+    values = df2['Counts']
+    labels = df2['Species']
+    plt.pie(values, labels = labels, autopct = '%1.1f%%')
+    plt.axis('Equal')
+    plt.title('Species of origin of peptides')
+    plt.show()
+    print(df2.head(10))
+
+
 #main function incorporating all others
 def main(peptide_list):
     urllist = generate_url_list(peptide_list)
-    species_series = get_species(urllist)
-    print(species_series.head(5))
-
+    print('\nSpecies list:')
+    species_df = pd.DataFrame({'Species': get_species(urllist)})
+    pieplot(species_df)
 
 
 
