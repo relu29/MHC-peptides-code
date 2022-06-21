@@ -73,5 +73,4 @@ def main(peptide_list):
     pieplot(species_df)
 
 
-
 main(razor_proteins)
