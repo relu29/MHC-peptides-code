@@ -11,6 +11,7 @@ argparser = argparse.ArgumentParser()
 argparser.add_argument('-i', '--input', help='input directory', type=str, required=True)
 argparser.add_argument('-o', '--output', help='output dir', type=str, required=True)
 argparser.add_argument('-t', '--threshold', help='EL_Rank threshold', type=float, required=False, default = 2)
+argparser.add_argument('-n', '--name', help='Name of output jpg file', type=str, required=True, default = 2)
 
 args = argparser.parse_args()
 
@@ -37,9 +38,12 @@ for key,value in set_dict.items():
 cb_color_cycle = ['#377eb8', '#ff7f00', '#4daf4a',
                   '#f781bf', '#a65628', '#984ea3',
                   '#999999', '#e41a1c', '#dede00']
-
 # Plot the diagram
 fig, ax = plt.subplots(1, figsize=(16,12))
 venn(set_dict, ax=ax, cmap = cb_color_cycle)
 plt.legend(label_list, ncol=len(label_list), loc = 9)
-plt.show()
+
+
+# Save figure in output directory
+figure_path = os.path.join(args.output, '{0}.jpg'.format(args.name))
+plt.savefig(figure_path)
